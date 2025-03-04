@@ -35,16 +35,16 @@ angular
       $scope.currentBlockProgress = 0;
       $scope.mimeType = "";
       $scope.isNewContent = !ecEditor.getContext("contentId") ? true : false;
-      $scope.uploadInfo = !ecEditor.getContext("uploadInfo") ? true : false;
+      $scope.uploadInfo = ecEditor.getContext("uploadInfo") ? ecEditor.getContext("uploadInfo") : false;
       /** Local file configuration */
       $scope.maxBlockSize = 5242880; //Each file will be split in 5 MB.
       $scope.retryChunkUploadLimit = 10; // total retry on any chunk upload failure
       $scope.delayBetweenRetryCalls = 2000; // time difference between chunk upload retry call 2sec
-      $scope.maxUploadSize = $scope.uploadInfo
-        ? Number($scope.uploadInfo.maxAllowedContentSize) * 1024 * 1024
+      $scope.maxUploadSize = $scope.uploadInfo?.maxAllowedContentSize
+        ? Number($scope.uploadInfo?.maxAllowedContentSize) * 1024 * 1024 * 1024
         : 16106127360; // falback is 15 GB
       $scope.minUploadSize = 1; //52428800;  // 50 MB
-      $scope.allowedContentType = $scope.uploadInfo
+      $scope.allowedContentType = $scope.uploadInfo?.allowedContentType
         ? $scope.uploadInfo.allowedContentType
         : ["mp4", "webm"]; // falback mp4 and webm
       $scope.selectedPrimaryCategory = "";
@@ -78,6 +78,16 @@ angular
         $("#progressElement").hide(); // Progress element for UI
         $("#retryUploadButton").hide(); // Retry on network outage for UI
         $(".progress").progress("reset"); // reset progress on each upload
+
+        // Ensure size limits are defined before initializing FineUploader
+        if (!$scope.maxUploadSize || !$scope.minUploadSize) {
+          console.error("File size limits are not defined!");
+          return;
+        }
+
+        console.log("Max Upload Size:", $scope.maxUploadSize);
+        console.log("Min Upload Size:", $scope.minUploadSize);
+
         $scope.uploader = new qq.FineUploader({
           element: document.getElementById("upload-content-div"),
           template: "qq-template-validation",
@@ -112,12 +122,27 @@ angular
             },
             onSubmit: function (id, name) {
               $("#qq-upload-actions").hide();
-              // $('#progressElement').show();
-              $scope.selectedFile = $scope.uploader.getFile(0);
-              $scope.totalBytesRemaining = $scope.selectedFile.size;
+              $('#progressElement').show();
+              let file = $scope.uploader.getFile(0);
+              if (!file) {
+                console.error("No file selected!");
+                return false;
+              }
+
+              console.log("Selected File:", file.name, "Size:", file.size);
+
+              if (file.size > $scope.maxUploadSize || file.size < $scope.minUploadSize) {
+                console.error("File size out of range:", file.size);
+                $scope.toasterMsgHandler("error", "Invalid file size.");
+                return false; // Prevent upload
+              }
+
+              $scope.selectedFile = file;
+              $scope.totalBytesRemaining = file.size;
               $scope.fileValidation();
             },
             onError: function (id, name, errorReason) {
+              console.error(`Upload Error: ${name} - ${errorReason}`);
               $scope.toasterMsgHandler("error", errorReason);
               $scope.pluginError(errorReason);
               $scope.uploader.reset();
