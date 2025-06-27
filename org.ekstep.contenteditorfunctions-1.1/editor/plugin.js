@@ -66,6 +66,8 @@ org.ekstep.contenteditor.basePlugin.extend({
             case "application/pdf":
             case "video/x-youtube":
             case "video/webm":
+            case "audio/mp3":
+            case "audio/wav":
                 this.saveGenericEditorContent(event, data);
                 break;
             default:

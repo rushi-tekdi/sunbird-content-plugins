@@ -136,6 +136,9 @@ org.ekstep.contenteditor.metadataPlugin.extend({
     reviewContent: function (data, callbackFn) {
         var instance = this
         var saveCallBackFn = function (err, res) {
+
+        console.log("####### data err", err)
+        console.log("####### data res", res)
             if (!err) {
                 ecEditor.dispatchEvent(instance.eventMap[instance.config.action], reviewCallBackFn)
             } else {
@@ -149,6 +152,7 @@ org.ekstep.contenteditor.metadataPlugin.extend({
             }
             callbackFn()
         }
+        console.log("####### data", data)
         this.saveContent(data, saveCallBackFn)
     },
 
@@ -169,6 +173,10 @@ org.ekstep.contenteditor.metadataPlugin.extend({
      * @description     - save meta data
      */
     saveContent: function (contentMeta, callbackFn) {
+        console.log("####### date contentMeta", contentMeta)
+
+        console.log("####### date options", this.options)
+        console.log("####### date eventMap", this.eventMap)
         switch (contentMeta.mimeType) {
             case 'application/vnd.ekstep.content-collection':
             case 'application/vnd.ekstep.ecml-archive':
