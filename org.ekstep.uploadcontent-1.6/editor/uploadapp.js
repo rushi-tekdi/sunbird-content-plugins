@@ -167,7 +167,7 @@ angular
           case "mp3":
             return "audio/mp3";
           case "wav":
-            return "audio/wav";
+            return "audio/mp3";
           default:
             return $scope.validateUploadURL(fileName);
         }
