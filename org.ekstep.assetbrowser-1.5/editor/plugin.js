@@ -78,7 +78,7 @@ org.ekstep.contenteditor.basePlugin.extend({
                             "objectType": "Content",
                             "mimeType": (mediaType == 'video') ? new Array('video/x-youtube', 'video/mp4', 'video/webm') : mediaType,
                             "contentType": (_.includes(contentType, 'Asset')) ? new Array('Asset') : new Array('Resource'),
-                            "status": new Array("Live", "Review", "Draft")
+                            "status": new Array("Live", "Review", "Draft", "Failed")
                         },
                         "limit": 50,
                         "offset": offset
@@ -95,7 +95,7 @@ org.ekstep.contenteditor.basePlugin.extend({
                                 "min": 1,
                                 "max": 2
                             },
-                            "status": new Array("Live", "Review", "Draft")
+                            "status": new Array("Live", "Review", "Draft","Failed")
                         },
                         "limit": 50,
                         "offset": offset
