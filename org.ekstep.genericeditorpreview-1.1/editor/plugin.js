@@ -65,9 +65,26 @@ org.ekstep.genericeditor.basePlugin.extend({
                     configuration.config = defaultPreviewConfig;
                 }
                 configuration.metadata = ecEditor.getService(ServiceConstants.CONTENT_SERVICE).getContentMeta(ecEditor.getContext('contentId'));
-                console.log('metadata ', configuration.metadata);
+                console.log('metadata new h5p changes ', configuration.metadata);
                 configuration.data = {};
-                previewContentIframe.contentWindow.initializePreview(configuration);
+                // previewContentIframe.contentWindow.initializePreview(configuration);
+                // previewContentIframe.contentWindow.previewcheckh5p(configuration);
+                if (
+                    previewContentIframe.contentWindow &&
+                    typeof previewContentIframe.contentWindow.initializePreview === 'function'
+                ) {
+                    previewContentIframe.contentWindow.initializePreview(configuration);
+                } else {
+                    console.warn('####h5pdebug initializePreview function not found');
+                }
+                if (
+                    previewContentIframe.contentWindow &&
+                    typeof previewContentIframe.contentWindow.previewcheckh5p === 'function'
+                ) {
+                    previewContentIframe.contentWindow.previewcheckh5p(configuration);
+                } else {
+                    console.warn('####h5pdebug previewcheckh5p function not found');
+                }
             };
         });
     }
